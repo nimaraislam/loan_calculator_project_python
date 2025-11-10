@@ -1,6 +1,14 @@
 from app.services.loan_service import *
 import pytest
 
+def test_get_total_loan_number():
+    loans = [{"principal_amount":1000},
+             {"principal_amount":2000},
+             {"principal_amount":7000},
+             {"principal_amount":780},
+             {"principal_amount":9000}]
+    assert get_total_loan_number(loans)==5
+
 def test_get_sum_of_principal_amount():
     loans = [{"principal_amount":1000},
              {"principal_amount":2000},
