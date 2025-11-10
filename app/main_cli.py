@@ -42,17 +42,18 @@ def main():
              if len(loans) == 0:
                     print("No loan has been calculated yet!")
              else:
-                    header=["Id","Principal Amount","Interest Rate","Term","M/Y","Interest","Final Amount"]
-                    print(f"{header[0]:<5}{header[1]:<18}{header[2]:<15}{header[3]:<5}{header[4]:<5}{header[5]:<15}{header[6]:<18}")
-                    print("-"*80)
-                    for i in loans:
+                header=["Id","Principal Amount","Interest Rate","Term","M/Y","Interest","Final Amount"]
+                print(f"{header[0]:<5}{header[1]:<18}{header[2]:<15}{header[3]:<5}{header[4]:<5}{header[5]:<15}{header[6]:<18}")
+                print("-"*80)
+                for i in loans:
                         #values=[i['id'],i['principal_amount'],i['interest_rate'],i['term'],i['month_or_year'],i['total_interest'],i['final_amount']]
-                        principal_formatted=f"{i['principal_amount']:.2f} kr."
-                        interest_rate_formatted=f"{i['interest_rate']:.2f} %"
-                        total_interest_formatted=f"{i['total_interest']:.2f} kr."
-                        final_amount_formatted=f"{i['final_amount']:.2f} kr."
-                        print(f"{i['id']:<5}{principal_formatted:<18}{interest_rate_formatted:<15}{i['term']:<5}{i['month_or_year']:<5}{total_interest_formatted:<15}{final_amount_formatted:<18}")
-                        print("-"*80)
+                    principal_formatted=f"{i['principal_amount']:.2f} kr."
+                    interest_rate_formatted=f"{i['interest_rate']:.2f} %"
+                    total_interest_formatted=f"{i['total_interest']:.2f} kr."
+                    final_amount_formatted=f"{i['final_amount']:.2f} kr."
+                    print(f"{i['id']:<5}{principal_formatted:<18}{interest_rate_formatted:<15}{i['term']:<5}{i['month_or_year']:<5}{total_interest_formatted:<15}{final_amount_formatted:<18}")
+                print("-"*80)
+
         elif input_option == "D":
              if len(loans) == 0:
                     print("No loan has been calculated yet!")
@@ -66,8 +67,16 @@ def main():
                 try:
                     input_id=input(">").strip()
                     input_id_int=int(input_id)
-                    loan_details=[i for i in loans if i['id']==input_id_int]
-                    print(loan_details)
+                    print("-------------Details--------------")
+                    for i in loans:
+                        if i['id']==input_id_int:
+                             print(f"Id: {i['id']}\n"
+                                   f"Princpal Amount: {i['principal_amount']:.2f} kr.\n"
+                                   f"PInterest Rate: {i['interest_rate']:.2f} %\n"
+                                   f"Term: {i['term']} {'Month' if {i['month_or_year']}=='M' else 'Year'}\n"
+                                   f"Total Interest Amount: {i['total_interest']:.2f} kr.\n"
+                                   f"Final Amount: {i['final_amount']:.2f} kr.")  
+                    print("-"*30)                
                 except ValueError:
                      print("Invalid Id")
                 except TypeError:
