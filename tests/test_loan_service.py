@@ -27,3 +27,10 @@ def test_get_sum_of_final_amount():
              {"final_amount":7700}]
     assert get_sum_of_final_amount(loans)==18700.00
 
+
+def test_calculate_monthly_installment():
+    assert calculate_monthly_installment(2) == 1203.10
+
+def test_get_loan_details_by_id():
+    assert len(get_loan_details_by_id(2)) == 1
+

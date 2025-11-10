@@ -1,5 +1,6 @@
 from app.schemas.loan_schema import Loan
 from app.services.file_service import read_db, write_db
+from app.services.loan_service import *
 
 def main():
     loans = read_db()
@@ -9,6 +10,7 @@ def main():
         print("Press C for calculate loan interest.")
         print("Press L for see the list of loans.")
         print("Press D for see the details of a loan.")
+        print("Press S for see the summary of loan.")
         print("Press Q for quit.")
         input_option=input("> ").strip().upper()
         if input_option == "C":
@@ -53,7 +55,6 @@ def main():
                     final_amount_formatted=f"{i['final_amount']:.2f} kr."
                     print(f"{i['id']:<5}{principal_formatted:<18}{interest_rate_formatted:<15}{i['term']:<5}{i['month_or_year']:<5}{total_interest_formatted:<15}{final_amount_formatted:<18}")
                 print("-"*80)
-
         elif input_option == "D":
              if len(loans) == 0:
                     print("No loan has been calculated yet!")
@@ -68,6 +69,7 @@ def main():
                     input_id=input(">").strip()
                     input_id_int=int(input_id)
                     print("-------------Details--------------")
+                    
                     for i in loans:
                         if i['id']==input_id_int:
                              print(f"Id: {i['id']}\n"
@@ -75,7 +77,8 @@ def main():
                                    f"PInterest Rate: {i['interest_rate']:.2f} %\n"
                                    f"Term: {i['term']} {'Month' if {i['month_or_year']}=='M' else 'Year'}\n"
                                    f"Total Interest Amount: {i['total_interest']:.2f} kr.\n"
-                                   f"Final Amount: {i['final_amount']:.2f} kr.")  
+                                   f"Final Amount: {i['final_amount']:.2f} kr." ) 
+                    print(f"Monthly Installment: {calculate_monthly_installment(input_id_int):.2f} kr.")
                     print("-"*30)                
                 except ValueError:
                      print("Invalid Id")
