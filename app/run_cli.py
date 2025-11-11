@@ -3,14 +3,15 @@ from app.services.loan_service import Loan
 from app.services.database import Database
 
 def main():
-    loans = read_db()
+    #loans = read_db()
     database=Database()
     print("**********Welcome to the Loan Calculator**********")
     print("Please select an option:")
     while True:
         print("Press C for calculate loan interest.")
+        print("Press D for delete a loan.")
         print("Press L for see the list of loans.")
-        print("Press D for see the details of a loan.")
+        print("Press E for see the details of a loan.")
         print("Press S for see the summary of loan.")
         print("Press Q for quit.")
         input_option=input("> ").strip().upper()
@@ -43,7 +44,33 @@ def main():
                      
             except ValueError as e:
                 print(f"Error: {e}")
+        elif input_option == "D":
+             loans = print_loan_list()
+             print("-"*25)
+             print("Select id to delete the loan.")
+             try:
+                input_id=input(">").strip()
+                input_id_int=int(input_id)
+                print("-------------Details--------------")
+                print_loan_details_by_id(input_id_int)
+                print("")
+                input_delete=input("Do you want to delete data?[Y/N]: ").strip().upper()
+                print("")
+                if input_delete=="Y":
+                    message=database.delete_loan_by_id(input_id_int)
+                    loans=read_db()
+                    print(f"{message}\n")
+                elif input_delete=="N":
+                    print("Data has not deleted.") 
+                else:
+                     print(f"Invalid input: '{input_delete}'.Invalid input\n")
+             except ValueError:
+                print("Invalid Id")
+             except TypeError:
+                print("Invalid Id")
+                
         elif input_option == "L":
+             loans = database.get_all_loans()
              if len(loans) == 0:
                     print("No loan has been calculated yet!\n")
              else:
@@ -58,35 +85,21 @@ def main():
                     final_amount_formatted=f"{i['final_amount']:.2f} kr."
                     print(f"{i['id']:<5}{principal_formatted:<18}{interest_rate_formatted:<15}{i['term']:<5}{i['month_or_year']:<5}{total_interest_formatted:<15}{final_amount_formatted:<18}")
                 print("-"*80)
-        elif input_option == "D":
-             if len(loans) == 0:
-                    print("No loan has been calculated yet!")
-             else:
-                print("Id","Principal Amount",sep="\t")
-                for i in loans:
-                    id = i['id']
-                    principal_amt=f"{i['principal_amount']} kr."
-                    print(id,principal_amt,sep="\t")
-                print("Select id to check the loan details")
-                try:
-                    input_id=input(">").strip()
-                    input_id_int=int(input_id)
-                    print("-------------Details--------------")
-                
-                    for i in loans:
-                        if i['id']==input_id_int:
-                             print(f"Id: {i['id']}\n"
-                                   f"Princpal Amount: {i['principal_amount']:.2f} kr.\n"
-                                   f"Interest Rate: {i['interest_rate']:.2f} %\n"
-                                   f"Term: {i['term']} {'Month' if {i['month_or_year']}=='M' else 'Year'}\n"
-                                   f"Total Interest Amount: {i['total_interest']:.2f} kr.\n"
-                                   f"Final Amount: {i['final_amount']:.2f} kr." ) 
-                    print(f"Monthly Installment: {database.calculate_monthly_installment(input_id_int):.2f} kr.")
-                    print("-"*30)                
-                except ValueError:
-                     print("Invalid Id")
-                except TypeError:
-                     print("Invalid Id")
+        elif input_option == "E":
+            loans = print_loan_list()
+            print("Select id to check the loan details")
+            try:
+                input_id=input(">").strip()
+                input_id_int=int(input_id)
+                print("-------------Details--------------")
+                print_loan_details_by_id(input_id_int)
+                print("-"*30)  
+
+            except ValueError:
+                print("Invalid Id")
+            except TypeError:
+                print("Invalid Id")
+
         elif input_option == "S":
              print("--------------Summary--------------")
              print(f"Total loan: {database.get_total_loan_number()} \n"
@@ -98,6 +111,30 @@ def main():
                 break
         else:
              print("Invalid selection!Press again a correct option.")
+
+def print_loan_list():
+      database = Database()
+      loans = database.get_all_loans()
+      if len(loans) == 0:
+            print("No loan has been calculated yet!")
+      else:
+           print("Id","Principal Amount",sep="\t")
+           for i in loans:
+             id = i['id']
+             principal_amt=f"{i['principal_amount']} kr."
+             print(id,principal_amt,sep="\t")
+
+def print_loan_details_by_id(input_id_int):
+      database = Database()
+      loan=database.get_loan_details_by_id(input_id_int)
+      print( f"Id: {loan['id']}\n"
+             f"Princpal Amount: {loan['principal_amount']:.2f} kr.\n"
+             f"Interest Rate: {loan['interest_rate']:.2f} %\n"
+             f"Term: {loan['term']} {'Month' if {loan['month_or_year']}=='M' else 'Year'}\n"
+             f"Total Interest Amount: {loan['total_interest']:.2f} kr.\n"
+             f"Final Amount: {loan['final_amount']:.2f} kr." ) 
+      print(f"Monthly Installment: {database.calculate_monthly_installment(input_id_int):.2f} kr.")
+           
 
 if __name__=="__main__":
     main()

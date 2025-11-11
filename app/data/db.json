@@ -70,5 +70,14 @@
     "month_or_year": "M",
     "total_interest": 2.46,
     "final_amount": 125.46
+  },
+  {
+    "id": 9,
+    "principal_amount": 5500,
+    "interest_rate": 4,
+    "term": 3,
+    "month_or_year": "Y",
+    "total_interest": 7920.0,
+    "final_amount": 13420.0
   }
 ]
