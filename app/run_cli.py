@@ -1,10 +1,11 @@
-from app.schemas.loan_schema import Loan
-from app.services.file_service import read_db, write_db
-from app.services.loan_service import *
+from app.services.file_service import read_db
+from app.services.loan_service import Loan
+from app.services.database import Database
 
 def main():
     loans = read_db()
-    print("**********Welcome to Loan Calculator**********")
+    database=Database()
+    print("**********Welcome to the Loan Calculator**********")
     print("Please select an option:")
     while True:
         print("Press C for calculate loan interest.")
@@ -25,24 +26,26 @@ def main():
                 loan=Loan(principal,interest_rate,term,month_or_year)
                 loan.calculate_loan_interest()
                 loan.calculate_final_amount()
+                print("-"*25)
                 print(f"Interest amount:{loan.calculate_loan_interest():.2f} kr.")
                 print(f"Final Amount to be Paid:{loan.calculate_final_amount():.2f} kr")
+                print("-"*25)
                 input_save=input("Do you want to save data?[Y/N]: ").strip().upper()
+                print("")
                 if input_save=="Y":
-                    loan.id = len(loans) + 1
-                    loans.append(loan.to_dict())
-                    write_db(loans)
-                    print("Data hase been saved successfully.")
+                    database.save_loan(loan)
+                    loans=read_db()
+                    print("Data has been saved successfully.\n")
                 elif input_save=="N":
                     print("Data has not saved.") 
                 else:
-                     print(f"Invalid input: '{input_save}'. Data was neither saved nor discarded. Calculation complete.")
+                     print(f"Invalid input: '{input_save}'. Data was neither saved nor discarded. Calculation complete.\n")
                      
             except ValueError as e:
                 print(f"Error: {e}")
         elif input_option == "L":
              if len(loans) == 0:
-                    print("No loan has been calculated yet!")
+                    print("No loan has been calculated yet!\n")
              else:
                 header=["Id","Principal Amount","Interest Rate","Term","M/Y","Interest","Final Amount"]
                 print(f"{header[0]:<5}{header[1]:<18}{header[2]:<15}{header[3]:<5}{header[4]:<5}{header[5]:<15}{header[6]:<18}")
@@ -69,25 +72,32 @@ def main():
                     input_id=input(">").strip()
                     input_id_int=int(input_id)
                     print("-------------Details--------------")
-                    
+                
                     for i in loans:
                         if i['id']==input_id_int:
                              print(f"Id: {i['id']}\n"
                                    f"Princpal Amount: {i['principal_amount']:.2f} kr.\n"
-                                   f"PInterest Rate: {i['interest_rate']:.2f} %\n"
+                                   f"Interest Rate: {i['interest_rate']:.2f} %\n"
                                    f"Term: {i['term']} {'Month' if {i['month_or_year']}=='M' else 'Year'}\n"
                                    f"Total Interest Amount: {i['total_interest']:.2f} kr.\n"
                                    f"Final Amount: {i['final_amount']:.2f} kr." ) 
-                    print(f"Monthly Installment: {calculate_monthly_installment(input_id_int):.2f} kr.")
+                    print(f"Monthly Installment: {database.calculate_monthly_installment(input_id_int):.2f} kr.")
                     print("-"*30)                
                 except ValueError:
                      print("Invalid Id")
                 except TypeError:
                      print("Invalid Id")
+        elif input_option == "S":
+             print("--------------Summary--------------")
+             print(f"Total loan: {database.get_total_loan_number()} \n"
+                   f"Sum of Princpal Amount: {database.get_sum_of_principal_amount():.2f} kr. \n"
+                   f"Sum of Interest Amount: {database.get_sum_of_interest_amount():.2f} kr. \n"
+                   f"Sum of Final Amount: {database.get_sum_of_final_amount():.2f} kr.")
+             print("-"*35)
         elif input_option == "Q":
                 break
         else:
-             print("Invalid selection!Press again a correct option.")       
+             print("Invalid selection!Press again a correct option.")
 
 if __name__=="__main__":
     main()

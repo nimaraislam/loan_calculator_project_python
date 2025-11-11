@@ -1,4 +1,5 @@
 from app.services.loan_service import *
+from app.schemas.loan_schema import Loan
 import pytest
 
 def test_get_total_loan_number():
@@ -27,10 +28,26 @@ def test_get_sum_of_final_amount():
              {"final_amount":7700}]
     assert get_sum_of_final_amount(loans)==18700.00
 
+def test_save_loan():
+    loan=Loan(5500,4,3,"Y")
+    loan.calculate_loan_interest()
+    loan.calculate_final_amount()
+    saved_loan = save_loan(loan)
+    loans = read_db()
+    assert saved_loan.id == 1
+    assert len(loans) == 1
+    assert loans[0]["principal_amount"] == 5500
+    assert loans[0]["final_amount"] == saved_loan.final_amount
+
 
 def test_calculate_monthly_installment():
-    assert calculate_monthly_installment(2) == 1203.10
+    #monkeypatch
+    assert calculate_monthly_installment(1) == 372.78
 
 def test_get_loan_details_by_id():
-    assert len(get_loan_details_by_id(2)) == 1
+   #monkeypatch
+   loan = get_loan_details_by_id(1)
+   assert loan["principal_amount"] == 5500
+  
+
 
