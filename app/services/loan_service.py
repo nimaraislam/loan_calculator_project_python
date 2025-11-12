@@ -1,7 +1,5 @@
-#from app.schemas.loan_schema import Loan,LoanSchema
-from app.services.file_service import read_db,write_db
+
 class Loan:
-    #annaul_interest_rate = 3.00
     def __init__(self,principal_amount: float,interest_rate: float,term: int,month_or_year: str):
         if not isinstance(principal_amount,(int,float)):
             raise ValueError("Amount should be a number.")
