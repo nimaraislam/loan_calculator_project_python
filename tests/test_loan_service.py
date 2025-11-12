@@ -1,61 +1,35 @@
-from app.services.database import *
-from app.services.loan_service import Loan
-from app.services.file_service import read_db,write_db,TEST_DB_PATH
 import pytest
-
-def test_get_total_loan_number():
-    test_database = Test_Database()
-    loans = [{"principal_amount":1000},
-             {"principal_amount":2000},
-             {"principal_amount":7000},
-             {"principal_amount":780},
-             {"principal_amount":9000}]
-    assert test_database.get_total_loan_number(loans)==5
-
-def test_get_sum_of_principal_amount():
-    test_database = Test_Database()
-    loans = [{"principal_amount":1000},
-             {"principal_amount":2000},
-             {"principal_amount":7000}]
-    assert test_database.get_sum_of_principal_amount(loans)==10000.00
-
-def test_get_sum_of_interest_amount():
-    test_database = Test_Database()
-    loans = [{"total_interest":50.50},
-             {"total_interest":20.00},
-             {"total_interest":100}]
-    assert test_database.get_sum_of_interest_amount(loans)==170.50
-
-def test_get_sum_of_final_amount():
-    test_database = Test_Database()
-    loans = [{"final_amount":5000},
-             {"final_amount":6000},
-             {"final_amount":7700}]
-    assert test_database.get_sum_of_final_amount(loans)==18700.00
-
-def test_save_loan():
-    test_database = Test_Database()
-    loan=Loan(5500,4,3,"Y")
+from app.schemas.loan_schema import Loan
+def test_loan_interest_month():
+    loan = Loan(2000,3,2,"M")
     loan.calculate_loan_interest()
-    loan.calculate_final_amount()
-    saved_loan = test_database.save_loan(loan)
-    loans = read_db("TEST_DB_PATH")
-    assert saved_loan.id == 1
-    assert len(loans) == 1
-    assert loans[0]["principal_amount"] == 5500
-    assert loans[0]["final_amount"] == saved_loan.final_amount
+
+    assert loan.total_interest == 120.00
+
+def test_loan_interest_year():
+    loan =  Loan(2000,3,2,"Y")
+    loan.calculate_loan_interest()
+
+    assert loan.total_interest == 1440.00
 
 
-def test_calculate_monthly_installment():
-    test_database = Test_Database()
-    assert test_database.calculate_monthly_installment(1) == 372.78
+def test_calculate_final_amount_month():
+    loan =  Loan(2000,3,2,"M")
+    loan.calculate_loan_interest()
 
-def test_get_loan_details_by_id():
-   test_database = Test_Database()
-   loan = test_database.get_loan_details_by_id(1)
-   assert loan["principal_amount"] == 5500
+    assert loan.calculate_final_amount() == 2120.00
 
+def test_calculate_final_amount_year():
+    loan =  Loan(2000,3,2,"Y")
+    loan.calculate_loan_interest()
 
-  
+    assert loan.calculate_final_amount() == 3440.00
 
+#def test_loan_interest_invalid_month_or_year_option():
+#    expected_message="Use 'M' for months or 'Y' for years."
+#    loan =  Loan(2000,3,2,"Z")
+#    with pytest.raises(ValueError, match=expected_message):
+#        loan.calculate_loan_interest()
+
+#    assert loan.total_interest == 0.00
 

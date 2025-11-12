@@ -1,4 +1,4 @@
-from app.services.file_service import read_db
+from app.services.file_service import read_db,DB_PATH
 from app.services.loan_service import Loan
 from app.services.database import Database
 
@@ -35,7 +35,6 @@ def main():
                 print("")
                 if input_save=="Y":
                     database.save_loan(loan)
-                    loans=read_db()
                     print("Data has been saved successfully.\n")
                 elif input_save=="N":
                     print("Data has not saved.") 
@@ -46,28 +45,31 @@ def main():
                 print(f"Error: {e}")
         elif input_option == "D":
              loans = print_loan_list()
-             print("-"*25)
-             print("Select id to delete the loan.")
-             try:
-                input_id=input(">").strip()
-                input_id_int=int(input_id)
-                print("-------------Details--------------")
-                print_loan_details_by_id(input_id_int)
-                print("")
-                input_delete=input("Do you want to delete data?[Y/N]: ").strip().upper()
-                print("")
-                if input_delete=="Y":
-                    message=database.delete_loan_by_id(input_id_int)
-                    loans=read_db()
-                    print(f"{message}\n")
-                elif input_delete=="N":
-                    print("Data has not deleted.") 
-                else:
-                     print(f"Invalid input: '{input_delete}'.Invalid input\n")
-             except ValueError:
-                print("Invalid Id")
-             except TypeError:
-                print("Invalid Id")
+             if loans == None:
+                 print("No loan has been calculated yet!")
+             else:
+                 print("-"*25)
+                 print("Select id to delete the loan.")
+                 try:
+                    input_id=input(">").strip()
+                    input_id_int=int(input_id)
+                    print("-------------Details--------------")
+                    print_loan_details_by_id(input_id_int)
+                    print("")
+                    input_delete=input("Do you want to delete data?[Y/N]: ").strip().upper()
+                    print("")
+                    if input_delete=="Y":
+                        message=database.delete_loan_by_id(input_id_int)
+                    #loans=read_db()
+                        print(f"{message}\n")
+                    elif input_delete=="N":
+                        print("Data has not deleted.") 
+                    else:
+                        print(f"Invalid input: '{input_delete}'.Invalid input\n")
+                 except ValueError:
+                    print("Invalid Id")
+                 except TypeError:
+                        print("Invalid Id")
                 
         elif input_option == "L":
              loans = database.get_all_loans()
@@ -87,26 +89,33 @@ def main():
                 print("-"*80)
         elif input_option == "E":
             loans = print_loan_list()
-            print("Select id to check the loan details")
-            try:
-                input_id=input(">").strip()
-                input_id_int=int(input_id)
-                print("-------------Details--------------")
-                print_loan_details_by_id(input_id_int)
-                print("-"*30)  
+            if loans is None:
+                 print("No loan has been calculated yet!")
+            else:
+                 print("-"*25)
+                 print("Select id to check the loan details")
+                 try:
+                    input_id=input(">").strip()
+                    input_id_int=int(input_id)
+                    print("-------------Details--------------")
+                    print_loan_details_by_id(input_id_int)
+                    print("-"*30)  
 
-            except ValueError:
-                print("Invalid Id")
-            except TypeError:
-                print("Invalid Id")
+                 except ValueError:
+                        print("Invalid Id")
+                 except TypeError:
+                        print("Invalid Id")
 
         elif input_option == "S":
-             print("--------------Summary--------------")
-             print(f"Total loan: {database.get_total_loan_number()} \n"
-                   f"Sum of Princpal Amount: {database.get_sum_of_principal_amount():.2f} kr. \n"
-                   f"Sum of Interest Amount: {database.get_sum_of_interest_amount():.2f} kr. \n"
-                   f"Sum of Final Amount: {database.get_sum_of_final_amount():.2f} kr.")
-             print("-"*35)
+             if database.get_total_loan_number() == 0:
+                print("No loan has been calculated yet!\n")
+             else:
+                print("--------------Summary--------------")
+                print(f"Total loan: {database.get_total_loan_number()} \n"
+                    f"Sum of Princpal Amount: {database.get_sum_of_principal_amount():.2f} kr. \n"
+                    f"Sum of Interest Amount: {database.get_sum_of_interest_amount():.2f} kr. \n"
+                    f"Sum of Final Amount: {database.get_sum_of_final_amount():.2f} kr.")
+                print("-"*35)
         elif input_option == "Q":
                 break
         else:
@@ -116,13 +125,14 @@ def print_loan_list():
       database = Database()
       loans = database.get_all_loans()
       if len(loans) == 0:
-            print("No loan has been calculated yet!")
+            return None          
       else:
            print("Id","Principal Amount",sep="\t")
            for i in loans:
              id = i['id']
              principal_amt=f"{i['principal_amount']} kr."
              print(id,principal_amt,sep="\t")
+      return loans
 
 def print_loan_details_by_id(input_id_int):
       database = Database()
@@ -134,6 +144,7 @@ def print_loan_details_by_id(input_id_int):
              f"Total Interest Amount: {loan['total_interest']:.2f} kr.\n"
              f"Final Amount: {loan['final_amount']:.2f} kr." ) 
       print(f"Monthly Installment: {database.calculate_monthly_installment(input_id_int):.2f} kr.")
+      return loan
            
 
 if __name__=="__main__":
