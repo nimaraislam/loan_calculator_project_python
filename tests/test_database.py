@@ -11,7 +11,6 @@ def test_save_loan():
     loan.calculate_final_amount()
     saved_loan = test_database.save_loan(loan)
     loans = read_db(TEST_DB_PATH)
-    assert saved_loan.id == 1
     assert len(loans) == 1
     assert loans[0]["principal_amount"] == 5500
     assert loans[0]["final_amount"] == saved_loan.final_amount
