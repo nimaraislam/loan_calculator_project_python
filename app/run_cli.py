@@ -47,6 +47,7 @@ def main():
              loans = print_loan_list()
              if loans == None:
                  print("No loan has been calculated yet!")
+                 print("-"*25)
              else:
                  print("-"*25)
                  print("Select id to delete the loan.")
@@ -59,7 +60,9 @@ def main():
                     input_delete=input("Do you want to delete data?[Y/N]: ").strip().upper()
                     print("")
                     if input_delete=="Y":
-                        database.delete_loan_by_id(input_id_int)
+                        deleted_loans=database.delete_loan_by_id(input_id_int)
+                        if deleted_loans is None:
+                            print(f"Loan with ID {input_delete} not found.")
                         print(f"Loan with id {input_delete} has been deleted.")
                     #loans=read_db()
                     elif input_delete=="N":
@@ -75,6 +78,7 @@ def main():
              loans = database.get_all_loans()
              if len(loans) == 0:
                     print("No loan has been calculated yet!\n")
+                    print("-"*25)
              else:
                 header=["Id","Principal Amount","Interest Rate","Term","M/Y","Interest","Final Amount"]
                 print(f"{header[0]:<5}{header[1]:<18}{header[2]:<15}{header[3]:<5}{header[4]:<5}{header[5]:<15}{header[6]:<18}")
@@ -91,6 +95,7 @@ def main():
             loans = print_loan_list()
             if loans is None:
                  print("No loan has been calculated yet!")
+                 print("-"*25)
             else:
                  print("-"*25)
                  print("Select id to check the loan details")
@@ -109,6 +114,7 @@ def main():
         elif input_option == "S":
              if database.get_total_loan_number() == 0:
                 print("No loan has been calculated yet!\n")
+                print("-"*25)
              else:
                 print("--------------Summary--------------")
                 print(f"Total loan: {database.get_total_loan_number()} \n"

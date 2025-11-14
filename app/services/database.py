@@ -21,13 +21,13 @@ class Database:
         loans = read_db(self.db_path)
         loan_to_delete = next((i for i in loans if i["id"]==id),None)
         if loan_to_delete is None :
-            return "Id does not exist." 
+            return None  
         else :
             loans.remove(loan_to_delete)
             write_db(loans,self.db_path)
             loans = read_db(self.db_path)
             #return f"Loan with id {id} has been deleted."
-            return loans
+            return loan_to_delete
         
     #def update_loan__by_id(self,id):
     #    loans = read_db(self.db_path)
