@@ -1,11 +1,12 @@
 from app.services.file_service import read_db,write_db,DB_PATH
+from app.services.loan_service import Loan
 
 class Database:
 
     def __init__(self,db_path=DB_PATH):
         self.db_path=db_path
 
-    def save_loan(self,loan):
+    def save_loan(self,loan : Loan):
         loans = read_db(self.db_path)
         if len(loans) == 0:
             loan.id = len(loans) + 1
@@ -13,7 +14,7 @@ class Database:
             loan.id = max([i['id'] for i in loans])+1
         loans.append(loan.to_dict())
         write_db(loans,self.db_path)
-        loans=read_db()
+        loans=read_db(self.db_path)
         return loan
     
     def delete_loan_by_id(self,id):
@@ -25,7 +26,17 @@ class Database:
             loans.remove(loan_to_delete)
             write_db(loans,self.db_path)
             loans = read_db(self.db_path)
-            return f"Loan with id {id} has been deleted."
+            #return f"Loan with id {id} has been deleted."
+            return loans
+        
+    #def update_loan__by_id(self,id):
+    #    loans = read_db(self.db_path)
+    #    #loan_to_update = next((i for i in loans if i["id"]==id),None)
+    #    for index,loan in enumerate(loans):
+    #        if loan.get("id") == id:
+    #        )
+            
+
         
     def calculate_monthly_installment(self,id):
         loans=read_db(self.db_path)

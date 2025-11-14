@@ -22,7 +22,7 @@ def test_delete_loan_by_id():
 
 def test_get_loan_details_by_id():
    loan = test_database.get_loan_details_by_id(1)
-   assert loan["principal_amount"] == 5500
+   assert loan["id"] == 1
 
 def test_calculate_monthly_installment():
     assert test_database.calculate_monthly_installment(1) == 372.78

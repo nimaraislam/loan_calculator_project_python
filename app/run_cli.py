@@ -8,14 +8,14 @@ def main():
     print("**********Welcome to the Loan Calculator**********")
     print("Please select an option:")
     while True:
-        print("Press C for calculate loan interest.")
+        print("Press A for add a new loan.")
         print("Press D for delete a loan.")
-        print("Press L for see the list of loans.")
-        print("Press E for see the details of a loan.")
-        print("Press S for see the summary of loan.")
+        print("Press L for view all loans.")
+        print("Press E for view details of a loan.")
+        print("Press S for summarize total principal, interest, and final amounts.")
         print("Press Q for quit.")
         input_option=input("> ").strip().upper()
-        if input_option == "C":
+        if input_option == "A":
             input_principal_amount= input("Enter the desired loan amount (Kr.): ").strip()
             input_interest_rate= input("Enter the interest rate (%): ").strip()
             input_term= input("Enter the term: ").strip()
@@ -59,11 +59,11 @@ def main():
                     input_delete=input("Do you want to delete data?[Y/N]: ").strip().upper()
                     print("")
                     if input_delete=="Y":
-                        message=database.delete_loan_by_id(input_id_int)
+                        database.delete_loan_by_id(input_id_int)
+                        print(f"Loan with id {input_delete} has been deleted.")
                     #loans=read_db()
-                        print(f"{message}\n")
                     elif input_delete=="N":
-                        print("Data has not deleted.") 
+                        print("Loan has not deleted.") 
                     else:
                         print(f"Invalid input: '{input_delete}'.Invalid input\n")
                  except ValueError:
